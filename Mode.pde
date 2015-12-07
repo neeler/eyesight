@@ -36,6 +36,9 @@ class Mode {
     if (fadeBeforeUpdate) {
       fadeAll(fadeFactor);
     }
+    if (justEntered) {
+      justEntered();
+    }
     //if (bpm.isBeat()) {
     //  onBeat();
     //  randomize();
@@ -50,6 +53,10 @@ class Mode {
   
   public void onBeat() {
     // Behavior that should only happen on the beat.
+  }
+  
+  public void justEntered() {
+    // Called after fade before update if this mode has just been entered.
   }
   
   public void superRandomize() {

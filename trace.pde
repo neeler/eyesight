@@ -27,6 +27,7 @@ class Trace extends Mode {
   
   public void justEntered() {
     resetPIs();
+    clockwise = (rand.nextInt(2) == 0);
   }
   
   public void resetPIs() {

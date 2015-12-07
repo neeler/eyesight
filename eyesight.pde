@@ -67,6 +67,6 @@ public void keyPressed() {
   } else if (key == ' ') {
     wheel.newScheme();
   } else if (key == 'm') {
-    eye.mode = (eye.mode + 1) % eye.nModes;
+    eye.setMode((eye.mode + 1) % eye.nModes);
   }
 }
