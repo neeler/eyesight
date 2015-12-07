@@ -15,10 +15,13 @@ class Mode {
   boolean delayable = false;
   boolean fadeBeforeUpdate = true;
   int prevTime;
+  int nPixels, nPanels;
   
-  Mode(boolean fadeBeforeUpdate) {
+  Mode(boolean fadeBeforeUpdate, int nPixels, int nPanels) {
     this.fadeBeforeUpdate = fadeBeforeUpdate;
     this.prevTime = millis();
+    this.nPixels = nPixels;
+    this.nPanels = nPanels;
   }
   
   // Delay update if relevant.
@@ -45,6 +48,7 @@ class Mode {
      randomize();
     }
     update();
+    wheel.turn(loopOffset);
     justEntered = false;
   }
   
@@ -82,7 +86,18 @@ class Mode {
   }
   
   public void fadeAll(float factor) {
-    eye.fadeAll(factor);
+    for (Panel panel : eye.panels) {
+      panel.fadeAll(factor);
+    }
+  }
+  
+  public void fadeOne(int index, float factor) {
+    int p;
+    for (p = 0; p < nPanels; p++) {
+      if (index < eye.panels[p].nPixels) break;
+      else index -= eye.panels[p].nPixels;
+    }
+    fadeOne(p, index, factor);
   }
   
   public void fadeOne(int panel, int index, float factor) {
@@ -93,7 +108,16 @@ class Mode {
     eye.panels[panel].fadeAll(factor);
   }
   
-  public void updateByIndex(int panel, int index, int[] c) {
+  public void updateOne(int index, int[] c) {
+    int p;
+    for (p = 0; p < nPanels; p++) {
+      if (index < eye.panels[p].nPixels) break;
+      else index -= eye.panels[p].nPixels;
+    }
+    updateOne(p, index, c);
+  }
+  
+  public void updateOne(int panel, int index, int[] c) {
     eye.panels[panel].updateOne(index, c);
   }
   

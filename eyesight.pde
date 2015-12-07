@@ -37,7 +37,6 @@ final int OR = 9;
 final int OBR = 10;
 final int OBL = 11;
 final int OL = 12;
-int nPanels = 13;
 
 boolean mouseRotate = false;
 boolean drawFFT = false;
@@ -53,7 +52,7 @@ float gainFactor = 1.0;
 int panelOffset = 100;
 int loopOffset = 1;
 int beatOffset = 11;
-int pixelOffset = 1;
+int pixelOffset = 2;
 
 public void settings() {
   size(1500, 1500, P3D);

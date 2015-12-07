@@ -10,8 +10,8 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 2;
-  int nModes = 3;
+  int mode = 3;
+  int nModes = 4;
   
   // Shapes
   PShape back, first, second, third;
@@ -39,6 +39,9 @@ class Eye {
     panels[OBL] = new Panel(lights.getChild("OBL"),0);
     panels[OL] = new Panel(lights.getChild("OL"),1);
     
+    nPixels = 0;
+    for (int i = 0; i < nPanels; i++) nPixels += panels[i].nPixels;
+    
     shields[0] = loadShape("back.svg");
     shields[1] = loadShape("first.svg");
     shields[2] = loadShape("second.svg");
@@ -49,9 +52,10 @@ class Eye {
     }
     
     modes = new Mode[nModes];
-    modes[0] = new GradientWipe();
-    modes[1] = new Trace();
-    modes[2] = new FFTxPanel();
+    modes[0] = new GradientWipe(nPixels, nPanels);
+    modes[1] = new Trace(nPixels, nPanels);
+    modes[2] = new FFTxPanel(nPixels, nPanels);
+    modes[3] = new FFTxRandomPixel(nPixels, nPanels);
   }
   
   public void draw() {
@@ -94,12 +98,6 @@ class Eye {
   public void setMode(int m) {
     mode = m % nModes;
     modes[mode].enter();
-  }
-  
-  public void fadeAll(float factor) {
-    for (Panel panel : panels) {
-      panel.fadeAll(factor);
-    }
   }
   
   public void drawShields() {

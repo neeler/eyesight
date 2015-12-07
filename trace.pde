@@ -5,19 +5,18 @@ class Trace extends Mode {
   
   int[] panelIndex = new int[nPanels];
   
-  Trace() {
-    super(true);
+  Trace(int nPixels, int nPanels) {
+    super(true, nPixels, nPanels);
     delayable = true;
   }
   
   public void update() {
     for (int p = 0; p < eye.nPanels; p++) {
       Panel panel = eye.panels[p];
-      updateByIndex(p, panelIndex[p], wheel.getColor(panelOffset * p));
+      updateOne(p, panelIndex[p], wheel.getColor(panelOffset * p));
       if (clockwise) panelIndex[p] = (panelIndex[p] + speed) % panel.nPixels;
       else panelIndex[p] = (panelIndex[p] - speed + panel.nPixels) % panel.nPixels;
     }
-    wheel.turn(loopOffset);
   }
   
   public void justEntered() {

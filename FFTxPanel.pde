@@ -5,10 +5,8 @@ class FFTxPanel extends Mode {
   int freqThresh = 200;
   int ampFactor = 20;
   
-  int[] panelIndex = new int[nPanels];
-  
-  FFTxPanel() {
-    super(true);
+  FFTxPanel(int nPixels, int nPanels) {
+    super(true, nPixels, nPanels);
     delayable = false;
   }
   
@@ -22,7 +20,6 @@ class FFTxPanel extends Mode {
         panel.updateAll(panelOffset * p, pixelOffset, iAmp);
       }
     }
-    wheel.turn(loopOffset);
   }
   
   public void justEntered() {
