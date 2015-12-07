@@ -71,4 +71,27 @@ class Panel {
     iOffset = (index + 1) % nPixels;
   }
   
+  public void updateAll(int[] c) {
+    for (int i = 0; i < nPixels; i++) {
+      colors[i][0] = c[0];
+      colors[i][1] = c[1];
+      colors[i][2] = c[2];
+    }
+  }
+  
+  public void updateAll(int offset) {
+    updateAll(0, offset);
+  }
+  
+  public void updateAll(int wheelPos, int offset) {
+    updateAll(wheelPos, offset, 255);
+  }
+  
+  public void updateAll(int wheelPos, int offset, int brightness) {
+    for (int i = 0; i < nPixels; i++) {
+      int[] c = wheel.getColor(wheelPos + offset * i, brightness);
+      colors[i] = c;
+    }
+  }
+  
 }

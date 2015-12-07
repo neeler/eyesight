@@ -1,5 +1,8 @@
 import ddf.minim.analysis.*;
 import ddf.minim.*;
+import ddf.minim.signals.*;
+import ddf.minim.effects.*;
+import processing.serial.*;
 import java.util.Random;
 import java.lang.Math;
 import java.awt.Color;
@@ -11,6 +14,14 @@ Random rand;
 OPC opc;
 ColorWheel wheel;
 Eye eye;
+
+// audio crap
+BPMDetector bpm;
+Minim minim;
+AudioPlayer sound;
+AudioInput in;
+int bufferSize = 1024;
+int sampleRate = 44100;
 
 //Panel IDs
 final int RT = 5;
@@ -29,6 +40,7 @@ final int OL = 12;
 int nPanels = 13;
 
 boolean mouseRotate = false;
+boolean drawFFT = false;
 
 // Global variables, perhaps for remote control.
 int globalBrightness = 255;
@@ -37,6 +49,11 @@ float fadeFactor = 0.9;
 int chance = 500;
 boolean modeSwitching = false;
 int modeChance = 320;
+float gainFactor = 1.0;
+int panelOffset = 100;
+int loopOffset = 1;
+int beatOffset = 11;
+int pixelOffset = 1;
 
 public void settings() {
   size(1500, 1500, P3D);
@@ -48,9 +65,18 @@ public void setup() {
   opc = new OPC(localHost, 7890);
   wheel = new ColorWheel(1500);
   eye = new Eye();
+  
+  minim = new Minim(this);
+  //Line in
+  in = minim.getLineIn(Minim.MONO, bufferSize, sampleRate);
+  //in = new AudioIn(this, 1);
+  bpm = new BPMDetector(in);
+  bpm.setup();
 }
 
 public void draw() {
+  background(0);
+  loopOffset = (int) map(mouseY, height, 0, 0, wheel.nColors()/20);
   eye.update();
   translate(width/2,height/2,0);
   if (mouseRotate) {
@@ -68,5 +94,7 @@ public void keyPressed() {
     wheel.newScheme();
   } else if (key == 'm') {
     eye.setMode((eye.mode + 1) % eye.nModes);
+  } else if (key == 'f') {
+    drawFFT = !drawFFT;
   }
 }

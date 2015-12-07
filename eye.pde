@@ -10,14 +10,16 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 1;
-  int nModes = 2;
+  int mode = 2;
+  int nModes = 3;
   
   // Shapes
   PShape back, first, second, third;
   PShape[] shields = new PShape[5];
   PShape lights;
   int deltaZ = 25;
+  color panelEdges = color(100,100,100);
+  float centerBrightness = 0;
   
   Eye() {
     lights = loadShape("lights.svg");
@@ -42,7 +44,6 @@ class Eye {
     shields[2] = loadShape("second.svg");
     shields[3] = loadShape("third.svg");
     shields[4] = loadShape("fourth.svg");
-    color panelEdges = color(100,100,100);
     for (PShape shield : shields) {
       shield.setStroke(panelEdges);
     }
@@ -50,11 +51,11 @@ class Eye {
     modes = new Mode[nModes];
     modes[0] = new GradientWipe();
     modes[1] = new Trace();
+    modes[2] = new FFTxPanel();
   }
   
   public void draw() {
     translate(0, 0);
-    background(0);
     pushMatrix();
     translate(-width/2, -height/2);
     for (Panel panel : panels) {
@@ -103,10 +104,28 @@ class Eye {
   
   public void drawShields() {
     translate(-width/2, -height/2);
+    flashCenter(drawFFT);
     for (int i = 0; i < shields.length; i++) {
       shape(shields[i]);
       translate(0,0,deltaZ);
     }
+  }
+  
+  public void flashCenter(boolean flash) {
+    int[] c;
+    if (flash) {
+      if (bpm.isBeat) {
+        centerBrightness = 255;
+        c = wheel.getColor(0, (int) centerBrightness);
+      } else {
+        centerBrightness = centerBrightness * fadeFactor;
+        c = wheel.getColor(0, (int) centerBrightness);
+      }
+    } else {
+      centerBrightness = 0;
+      c = new int[] {0, 0, 0};
+    }
+    shields[4].getChild(0).getChild("CENTER").setFill(color(c[0], c[1], c[2]));
   }
   
 }

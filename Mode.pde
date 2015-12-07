@@ -30,6 +30,7 @@ class Mode {
       superUpdate();
       prevTime = time;
     }
+    if (drawFFT) drawFFT();
   }
   
   public void superUpdate() {
@@ -39,16 +40,21 @@ class Mode {
     if (justEntered) {
       justEntered();
     }
-    //if (bpm.isBeat()) {
-    //  onBeat();
-    //  randomize();
-    //}
+    if (bpm.isBeat()) {
+     superOnBeat();
+     randomize();
+    }
     update();
     justEntered = false;
   }
   
   public void update() {
     // Behavior that should happen every update.
+  }
+  
+  public void superOnBeat() {
+    wheel.turn(beatOffset);
+    onBeat();
   }
   
   public void onBeat() {
@@ -93,6 +99,24 @@ class Mode {
   
   public void enter() {
     justEntered = true;
+  }
+  
+  public void drawFFT() {
+    float dx = width / bpm.bands;
+    for (int i = 0; i < bpm.bands; i++) {
+      float dy = map(bpm.getDetailBand(i), 0, 255, 0, height/4);
+      stroke(eye.panelEdges);
+      strokeWeight(4);
+      int[] c = wheel.getColor((int) map(i, 0, bpm.bands, 0, wheel.nColors));
+      fill(c[0], c[1], c[2]);
+      rect(i * dx, height - dy, dx/2, dy);
+      float ltY = bpm.totalLong[i];
+      float stY = bpm.totalShort[i];
+      ltY = map(ltY, 0, 255, 0, height/4);
+      c = wheel.getColor((int) map(i, 0, bpm.bands, 0, wheel.nColors) + wheel.nColors/2);
+      fill(c[0], c[1], c[2]);
+      rect(i * dx + dx/2, height - ltY, dx/2, ltY);
+    }
   }
   
 }

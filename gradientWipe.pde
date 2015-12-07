@@ -1,8 +1,6 @@
 class GradientWipe extends Mode {
   
-  int loopOffset = 1;
   int loopCounter = 2300;
-  int panelOffset = 10;
   
   GradientWipe() {
     super(true);
@@ -16,7 +14,6 @@ class GradientWipe extends Mode {
         updateByIndex(p, i, targetColor(i + panelOffset, panel.nPixels));
       }
     }
-    loopOffset = (int) map(mouseY, height, 0, 0, wheel.nColors()/20);
     wheel.turn(loopOffset);
     loopCounter = (loopCounter + 1) % 3927;
   }
