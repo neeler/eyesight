@@ -7,7 +7,7 @@ class Panel {
   
   
   PShape shape;
-  int alpha = 150;
+  int alpha = 200;
   int iOffset;
   
   Panel(PShape shape, int z) {
@@ -63,10 +63,12 @@ class Panel {
   
   public void updateOne(int index, int[] c) {
     colors[index] = c;
+    iOffset = (index + 1) % nPixels;
   }
   
   public void updateOne(int index, int offset) {
     colors[index] = wheel.getColor(offset);
+    iOffset = (index + 1) % nPixels;
   }
   
 }

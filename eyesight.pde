@@ -26,6 +26,7 @@ final int OR = 9;
 final int OBR = 10;
 final int OBL = 11;
 final int OL = 12;
+int nPanels = 13;
 
 boolean mouseRotate = false;
 
@@ -65,5 +66,7 @@ public void keyPressed() {
     mouseRotate = !mouseRotate;
   } else if (key == ' ') {
     wheel.newScheme();
+  } else if (key == 'm') {
+    eye.mode = (eye.mode + 1) % eye.nModes;
   }
 }

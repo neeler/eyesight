@@ -10,8 +10,8 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 0;
-  int nModes = 1;
+  int mode = 1;
+  int nModes = 2;
   
   // Shapes
   PShape back, first, second, third;
@@ -49,6 +49,7 @@ class Eye {
     
     modes = new Mode[nModes];
     modes[0] = new GradientWipe();
+    modes[1] = new Trace();
   }
   
   public void draw() {

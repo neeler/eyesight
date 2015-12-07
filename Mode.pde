@@ -11,7 +11,7 @@ public void randomize()
 
 class Mode {
   
-  boolean justEntered = false;
+  boolean justEntered = true;
   boolean delayable = false;
   boolean fadeBeforeUpdate = true;
   int prevTime;
