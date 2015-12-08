@@ -143,6 +143,13 @@ class Mode {
     }
   }
   
+  public void updateRing(int index, int wheelPos, int panelOffset, int pixelOffset) {
+    for(int i = 0; i < rings[index].length; i++){
+      Panel panel = eye.panels[rings[index][i]];
+      panel.updateAll(wheelPos + panelOffset * i, pixelOffset);
+    }
+  }
+  
   public void enter() {
     justEntered = true;
   }
