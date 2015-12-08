@@ -24,12 +24,12 @@ int bufferSize = 1024;
 int sampleRate = 44100;
 
 //Panel IDs
-final int RT = 5;
 final int R0 = 0;
 final int R1 = 1;
 final int R2 = 2;
 final int R3 = 3;
 final int R4 = 4;
+final int RT = 5;
 final int C0 = 6;
 final int C1 = 7;
 final int OT = 8;

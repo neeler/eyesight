@@ -10,8 +10,8 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 3;
-  int nModes = 4;
+  int mode = 4;
+  int nModes = 5;
   
   // Shapes
   PShape back, first, second, third;
@@ -56,6 +56,7 @@ class Eye {
     modes[1] = new Trace(nPixels, nPanels);
     modes[2] = new FFTxPanel(nPixels, nPanels);
     modes[3] = new FFTxRandomPixel(nPixels, nPanels);
+    modes[4] = new Ripple(nPixels, nPanels);
   }
   
   public void draw() {

@@ -17,6 +17,14 @@ class Mode {
   int prevTime;
   int nPixels, nPanels;
   
+  int nRings = 6;
+  int[][] rings = new int[][] { {RT},
+                                {C0},
+                                {R0, R1, R2, R3, R4},
+                                {C1},
+                                {OT, OR, OL},
+                                {OBR, OBL} };
+  
   Mode(boolean fadeBeforeUpdate, int nPixels, int nPanels) {
     this.fadeBeforeUpdate = fadeBeforeUpdate;
     this.prevTime = millis();
@@ -119,6 +127,20 @@ class Mode {
   
   public void updateOne(int panel, int index, int[] c) {
     eye.panels[panel].updateOne(index, c);
+  }
+  
+  public void updateRing(int index, int[] c) {
+    for(int i = 0; i < rings[index].length; i++){
+      Panel panel = eye.panels[rings[index][i]];
+      panel.updateAll(c);
+    }
+  }
+  
+  public void updateRing(int index, int panelOffset, int pixelOffset) {
+    for(int i = 0; i < rings[index].length; i++){
+      Panel panel = eye.panels[rings[index][i]];
+      panel.updateAll(panelOffset * i, pixelOffset);
+    }
   }
   
   public void enter() {
