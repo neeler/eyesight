@@ -94,4 +94,17 @@ class Panel {
     }
   }
   
+  public int[] getAverage() {
+    int r, g, b;
+    r = g = b = 0;
+    for (int i = 0; i < nPixels; i++) {
+      r += colors[i][0];
+      g += colors[i][1];
+      b += colors[i][2];
+    }
+    r = round(r/nPixels);
+    g = round(g/nPixels);
+    b = round(b/nPixels);
+    return new int[] {r, g, b};
+  }
 }

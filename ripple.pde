@@ -1,6 +1,6 @@
 class Ripple extends Mode {
   
-  int ringOffset = 100;
+  int ringOffset = 400;
   boolean inward = false;
   
   Ripple(int nPixels, int nPanels) {

@@ -150,6 +150,61 @@ class Mode {
     }
   }
   
+  public void shiftRings(int[] c, boolean inward) {
+    if (inward) {
+      for (int i = 0; i < nRings - 1; i++) {
+        updateRing(i, averageRing(i + 1));
+      }
+      updateRing(nRings - 1, c);
+    } else {
+      for (int i = nRings - 1; i > 0; i--) {
+        updateRing(i, averageRing(i - 1));
+      }
+      updateRing(0, c);
+    }
+  }
+  
+  // shift all but skipRing
+  public void shiftRings(int[] c, boolean inward, int skipRing) {
+    if (inward) {
+      for (int i = 0; i < nRings - 1; i++) {
+        if (i == skipRing - 1) {
+          i++;
+          updateRing(i - 1, averageRing(i + 1));
+        } else {
+          updateRing(i, averageRing(i + 1));
+        }
+      }
+      updateRing(nRings - 1, c);
+    } else {
+      for (int i = nRings - 1; i > 0; i--) {
+        if (i == skipRing + 1) {
+          i--;
+          updateRing(i + 1, averageRing(i - 1));
+        } else {
+          updateRing(i, averageRing(i - 1));
+        }
+      }
+      updateRing(0, c);
+    }
+  }
+  
+  public int[] averageRing(int index) {
+    int[] c = new int[] {0, 0, 0};
+    int nPan = rings[index].length;
+    for (int i = 0; i < nPan; i++) {
+      int[] panelAverage = eye.panels[rings[index][i]].getAverage();
+      c[0] += panelAverage[0];
+      c[1] += panelAverage[1];
+      c[2] += panelAverage[2];
+    }
+    c[0] = round(c[0]/nPan);
+    c[1] = round(c[1]/nPan);
+    c[2] = round(c[2]/nPan);
+    return c;
+  }
+      
+  
   public void enter() {
     justEntered = true;
   }

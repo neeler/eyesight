@@ -40,6 +40,7 @@ final int OL = 12;
 
 boolean mouseRotate = false;
 boolean drawFFT = false;
+boolean mouseBoolean = false;
 
 // Global variables, perhaps for remote control.
 int globalBrightness = 255;
@@ -50,9 +51,9 @@ boolean modeSwitching = false;
 int modeChance = 320;
 float gainFactor = 1.0;
 int panelOffset = 10;
-int loopOffset = 1;
-int beatOffset = 11;
-int pixelOffset = 2;
+int loopOffset = 30;
+int beatOffset = 100;  
+int pixelOffset = 1;
 
 public void settings() {
   size(1500, 1500, P3D);
@@ -75,7 +76,7 @@ public void setup() {
 
 public void draw() {
   background(0);
-  loopOffset = (int) map(mouseY, height, 0, 0, wheel.nColors()/20);
+  //loopOffset = (int) map(mouseY, height, 0, 0, wheel.nColors()/20);
   eye.update();
   translate(width/2,height/2,0);
   if (mouseRotate) {
@@ -96,4 +97,8 @@ public void keyPressed() {
   } else if (key == 'f') {
     drawFFT = !drawFFT;
   }
+}
+
+public void mouseClicked() {
+  mouseBoolean = !mouseBoolean;
 }
