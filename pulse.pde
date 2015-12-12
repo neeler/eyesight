@@ -29,7 +29,7 @@ class Pulse extends Mode {
   }
   
   public void randomize() {
-    if (rand.nextInt(chance) == 0) {
+    if (maybe(chance)) {
       inward = !inward;
     }
   }

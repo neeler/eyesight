@@ -6,6 +6,8 @@ import processing.serial.*;
 import java.util.Random;
 import java.lang.Math;
 import java.awt.Color;
+import oscP5.*;
+import netP5.*;
 
 // Connection information.
 final String localHost = "127.0.0.1";
@@ -42,18 +44,31 @@ boolean mouseRotate = false;
 boolean drawFFT = false;
 boolean mouseBoolean = false;
 
-// Global variables, perhaps for remote control.
+// Global variables for remote control.
 int globalBrightness = 255;
 int globalDelay = 0;
 float fadeFactor = 0.9;
 int chance = 500;
 boolean modeSwitching = false;
 int modeChance = 320;
-float gainFactor = 1.0;
+float gainFactor = 1.0;  
+int pixelOffset = 2;
 int panelOffset = 10;
-int loopOffset = 30;
-int beatOffset = 100;  
-int pixelOffset = 1;
+int loopOffset = 10;
+int beatOffset = 100;
+int shiftChance = 8;
+
+int nColors = 1500;
+int maxDelay = 480;
+int maxOffset = nColors/8;
+int maxPixelOffset = maxOffset/8;
+
+// Open sound control business
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+NetAddressList myNetAddressList = new NetAddressList();
+int myListeningPort = 5001;
+int myBroadcastPort = 12000;
 
 public void settings() {
   size(1500, 1500, P3D);
@@ -63,7 +78,7 @@ public void setup() {
   background(0);
   rand = new Random();
   opc = new OPC(localHost, 7890);
-  wheel = new ColorWheel(1500);
+  wheel = new ColorWheel(nColors);
   eye = new Eye();
   
   minim = new Minim(this);
@@ -72,6 +87,10 @@ public void setup() {
   //in = new AudioIn(this, 1);
   bpm = new BPMDetector(in);
   bpm.setup();
+  
+  oscP5 = new OscP5(this, myListeningPort);
+  // set the remote location to be the localhost on port 5001
+  myRemoteLocation = new NetAddress("10.0.0.6", myListeningPort);
 }
 
 public void draw() {
@@ -101,4 +120,101 @@ public void keyPressed() {
 
 public void mouseClicked() {
   mouseBoolean = !mouseBoolean;
+}
+
+void oscEvent(OscMessage theOscMessage) 
+{ 
+  oscConnect(theOscMessage.netAddress().address());
+  
+  String addPatt = theOscMessage.addrPattern();
+  int patLen = addPatt.length();
+  float x, y;
+  int a0, a1;
+  
+  if (addPatt.length() < 3) {
+    //println("Page change");
+  } else if (patLen == 9 && addPatt.substring(0, 5).equals("/mode")) {
+    if (theOscMessage.get(0).floatValue() == 1.0) {
+      a0 = 5 - Integer.parseInt(addPatt.substring(6, 7));
+      a1 = Integer.parseInt(addPatt.substring(8, 9)) - 1;
+      eye.setMode((5 * a0 + a1) % eye.nModes);
+      println(eye.mode);
+    }
+  } else if (patLen == 10 && addPatt.substring(0, 8).equals("/offsets")) {
+    int iOffset = Integer.parseInt(addPatt.substring(9,10));
+    float faderVal = theOscMessage.get(0).floatValue();
+    switch(iOffset) {
+      case 1: // PIXEL
+        pixelOffset = round(map(faderVal, 0.0, 1.0, 0.0, maxPixelOffset));
+        break;
+      case 2: // PANEL
+        panelOffset = round(map(faderVal, 0.0, 1.0, 0.0, maxOffset));
+        break;
+      case 3: // LOOP
+        loopOffset = round(map(faderVal, 0.0, 1.0, 0.0, maxOffset));
+        break;
+      case 4: // BEAT
+        beatOffset = round(map(faderVal, 0.0, 1.0, 0.0, maxOffset));
+        break;
+    }
+  } else if (addPatt.equals("/delay")) {
+    globalDelay = round(map(theOscMessage.get(0).floatValue(), 0, 1, 0, maxDelay));
+  } else if (addPatt.equals("/brightness")) {
+    globalBrightness = round(theOscMessage.get(0).floatValue());
+  } else {
+    print("Unexpected OSC Message Recieved: ");
+    println("address pattern: " + theOscMessage.addrPattern());
+    println("type tag: " + theOscMessage.typetag());
+  }
+  
+  oscSync();
+}
+
+void oscSync()
+{
+  OscMessage message;
+  
+  message = new OscMessage("/mode/" + str(5 - eye.mode / 5) + "/" + str(eye.mode % 5 + 1));
+  message.add(1.0);
+  oscP5.send(message, myNetAddressList);
+  
+  message = new OscMessage("/offsets/1");
+  message.add(map(pixelOffset, 0.0, maxPixelOffset, 0.0, 1.0));
+  oscP5.send(message, myNetAddressList);
+  
+  message = new OscMessage("/offsets/2");
+  message.add(map(panelOffset, 0.0, maxOffset, 0.0, 1.0));
+  oscP5.send(message, myNetAddressList);
+  
+  message = new OscMessage("/offsets/3");
+  message.add(map(loopOffset, 0.0, maxOffset, 0.0, 1.0));
+  oscP5.send(message, myNetAddressList);
+  
+  message = new OscMessage("/offsets/4");
+  message.add(map(beatOffset, 0.0, maxOffset, 0.0, 1.0));
+  oscP5.send(message, myNetAddressList);
+  
+  message = new OscMessage("/delay");
+  message.add(map(globalDelay, 0, maxDelay, 0, 1));
+  oscP5.send(message, myNetAddressList);
+  
+  message = new OscMessage("/brightness");
+  message.add(globalBrightness);
+  oscP5.send(message, myNetAddressList);
+  
+}
+
+private void oscConnect(String theIPaddress) {
+  if (!myNetAddressList.contains(theIPaddress, myBroadcastPort)) {
+    myNetAddressList.add(new NetAddress(theIPaddress, myBroadcastPort));
+    //println("### adding " + theIPaddress + " to the list.");
+    //oscSync();
+  } else {
+    //println("### " + theIPaddress + " is already connected.");
+  }
+  //println("### currently there are "+myNetAddressList.list().size()+" remote locations connected.");
+}
+
+public boolean maybe(int chance) {
+  return (rand.nextInt(chance) == 0);
 }

@@ -164,8 +164,32 @@ class Mode {
     }
   }
   
+  public void shiftRings(int[] c, boolean inward, int startR, int endR) {
+    startR = constrain(startR, 0, nRings - 1);
+    endR = constrain(endR, 0, nRings - 1);
+    if (startR >= endR) return;
+    if (inward) {
+      for (int i = startR; i < endR; i++) {
+        updateRing(i, averageRing(i + 1));
+      }
+      updateRing(endR, c);
+    } else {
+      for (int i = endR; i > startR; i--) {
+        updateRing(i, averageRing(i - 1));
+      }
+      updateRing(startR, c);
+    }
+  }
+  
   // shift all but skipRing
   public void shiftRings(int[] c, boolean inward, int skipRing) {
+    if (skipRing == 0) {
+      shiftRings(c, inward, 1, nRings - 1);
+      return;
+    } else if (skipRing == nRings - 1) {
+      shiftRings(c, inward, 0, nRings - 2);
+      return;
+    }
     if (inward) {
       for (int i = 0; i < nRings - 1; i++) {
         if (i == skipRing - 1) {
@@ -203,7 +227,98 @@ class Mode {
     c[2] = round(c[2]/nPan);
     return c;
   }
-      
+  
+  public void rotateRingPanels(int index, boolean clockwise) {
+    int nPan = rings[index].length;
+    for (int i = 0; i < nPan; i++) {
+      eye.panels[rings[index][i]].rotate(clockwise);
+    }
+  }
+  
+  public void rotateRing(int index, boolean clockwise) {
+    int nPan = rings[index].length;
+    if (clockwise) {
+      int[] lastC = eye.panels[rings[index][nPan - 1]].getAverage();
+      for (int i = nPan - 1; i > 0; i--) {
+        int[] panelAve = eye.panels[rings[index][i - 1]].getAverage();
+        eye.panels[rings[index][i]].updateAll(panelAve);
+      }
+      eye.panels[rings[index][0]].updateAll(lastC);
+    } else {
+      int[] firstC = eye.panels[rings[index][0]].getAverage();
+      for (int i = 0; i < nPan - 1; i++) {
+        int[] panelAve = eye.panels[rings[index][i + 1]].getAverage();
+        eye.panels[rings[index][i]].updateAll(panelAve);
+      }
+      eye.panels[rings[index][nPan - 1]].updateAll(firstC);
+    }
+  }
+  
+  public void shiftSomething() {
+    int nShifts = 5;
+    int choice = rand.nextInt(nShifts);
+    boolean dir = randBool();
+    int skipRing, panel, ring;
+    switch(choice) {
+      case 0:
+        shiftRings(wheel.getColor(0), dir);
+        break;
+      case 1:
+        skipRing = rand.nextInt(nRings);
+        shiftRings(wheel.getColor(0), dir, skipRing);
+        break;
+      case 2:
+        panel = rand.nextInt(nPanels);
+        eye.panels[panel].rotate(dir);
+        break;
+      case 3:
+        ring = rand.nextInt(nRings);
+        rotateRingPanels(ring, dir);
+        break;
+      case 4:
+        ring = rand.nextInt(nRings);
+        rotateRing(ring, dir);
+        break;
+    }
+  }
+  
+   public void rotateSomething() {
+    int nRot = 2;
+    int choice = rand.nextInt(nRot);
+    boolean dir = randBool();
+    int panel, ring;
+    switch(choice) {
+      case 0:
+        panel = rand.nextInt(nPanels);
+        eye.panels[panel].rotate(dir);
+        break;
+      case 1:
+        ring = rand.nextInt(nRings);
+        rotateRingPanels(ring, dir);
+        break;
+    }
+  }
+  
+  public void addSomething(boolean justOne) {
+    int nAdds = justOne ? 1 : 3;
+    int choice = rand.nextInt(nAdds);
+    int pixel, panel, ring;
+    switch(choice) {
+      case 0:
+        panel = rand.nextInt(nPanels);
+        pixel = rand.nextInt(eye.panels[panel].nPixels);
+        eye.panels[panel].updateOne(pixel, 0);
+        break;
+      case 1:
+        panel = rand.nextInt(nPanels);
+        eye.panels[panel].updateAll(pixelOffset);
+        break;
+      case 2:
+        ring = rand.nextInt(nRings);
+        updateRing(ring, panelOffset, pixelOffset);
+        break;
+    }
+  }
   
   public void enter() {
     justEntered = true;
@@ -225,6 +340,10 @@ class Mode {
       fill(c[0], c[1], c[2]);
       rect(i * dx + dx/2, height - ltY, dx/2, ltY);
     }
+  }
+  
+  public boolean randBool() {
+    return (maybe(2));
   }
   
 }

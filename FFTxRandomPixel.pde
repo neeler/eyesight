@@ -20,6 +20,9 @@ class FFTxRandomPixel extends Mode {
        updateOne(i, wheel.getColor(i * pixelOffset, iAmp));
      }
     }
+    if (maybe(shiftChance)) {
+      shiftSomething();
+    }
   }
   
   public void justEntered() {
@@ -27,10 +30,10 @@ class FFTxRandomPixel extends Mode {
   }
   
   public void randomize() {
-    if (rand.nextInt(4) == 0) {
+    if (maybe(4)) {
       assignOneBand(rand.nextInt(nPixels));
     }
-    if (rand.nextInt(128) == 0) {
+    if (maybe(128)) {
       ampFactor = 10 + rand.nextInt(20);
     }
   }

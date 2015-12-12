@@ -21,7 +21,7 @@ class Trace extends Mode {
   
   public void justEntered() {
     resetPIs();
-    clockwise = (rand.nextInt(2) == 0);
+    clockwise = randBool();
   }
   
   public void resetPIs() {
@@ -31,7 +31,7 @@ class Trace extends Mode {
   }
   
   public void randomize() {
-    if (rand.nextInt(chance) == 0) {
+    if (maybe(chance)) {
       clockwise = !clockwise;
     }
   }

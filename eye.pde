@@ -10,8 +10,8 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 5;
-  int nModes = 6;
+  int mode = 6;
+  int nModes = 7;
   
   // Shapes
   PShape back, first, second, third;
@@ -58,6 +58,7 @@ class Eye {
     modes[3] = new FFTxRandomPixel(nPixels, nPanels);
     modes[4] = new Ripple(nPixels, nPanels);
     modes[5] = new Pulse(nPixels, nPanels);
+    modes[6] = new Swirl(nPixels, nPanels);
   }
   
   public void draw() {
@@ -90,7 +91,7 @@ class Eye {
   
   // Randomization.
   public void randomize() {
-    if (modeSwitching && rand.nextInt(modeChance) == 0) {
+    if (modeSwitching && maybe(modeChance)) {
       int newMode = rand.nextInt(nModes);
       setMode(newMode);
     }

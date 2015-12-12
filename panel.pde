@@ -94,6 +94,28 @@ class Panel {
     }
   }
   
+  public void rotate(boolean clockwise) {
+    if (clockwise) {
+      int[] lastC = new int[] {colors[nPixels - 1][0],
+                               colors[nPixels - 1][1],
+                               colors[nPixels - 1][2]};
+      for (int i = nPixels - 1; i > 0; i--) {
+        colors[i][0] = colors[i - 1][0];
+        colors[i][0] = colors[i - 1][1];
+        colors[i][0] = colors[i - 1][2];
+      }
+      colors[0] = lastC;
+    } else {
+      int[] firstC = new int[] {colors[0][0], colors[0][1], colors[0][2]};
+      for (int i = 0; i < nPixels - 1; i++) {
+        colors[i][0] = colors[i + 1][0];
+        colors[i][0] = colors[i + 1][1];
+        colors[i][0] = colors[i + 1][2];
+      }
+      colors[nPixels - 1] = firstC;
+    }
+  }
+  
   public int[] getAverage() {
     int r, g, b;
     r = g = b = 0;
