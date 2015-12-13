@@ -13,23 +13,29 @@ class Mode {
   
   boolean justEntered = true;
   boolean delayable = false;
+  boolean autoFFT = true;
   boolean fadeBeforeUpdate = true;
   int prevTime;
   int nPixels, nPanels;
   
   int nRings = 6;
-  int[][] rings = new int[][] { {RT},
-                                {C0},
+  int[][] rings = new int[][] { {C0},
+                                {RT},
                                 {R0, R1, R2, R3, R4},
                                 {C1},
                                 {OT, OR, OL},
                                 {OBR, OBL} };
+                                
+  int[] panelBands;
+  int freqThresh = 200;
+  int ampFactor = 20;
   
   Mode(boolean fadeBeforeUpdate, int nPixels, int nPanels) {
     this.fadeBeforeUpdate = fadeBeforeUpdate;
     this.prevTime = millis();
     this.nPixels = nPixels;
     this.nPanels = nPanels;
+    panelBands = new int[nPanels];
   }
   
   // Delay update if relevant.
@@ -49,6 +55,7 @@ class Mode {
       fadeAll(fadeFactor);
     }
     if (justEntered) {
+      assignPanelBands();
       justEntered();
     }
     if (bpm.isBeat()) {
@@ -56,6 +63,9 @@ class Mode {
      randomize();
     }
     update();
+    if (autoFFT & panelFFT) {
+      applyPanelsFFT();
+    }
     wheel.turn(loopOffset);
     justEntered = false;
   }
@@ -80,6 +90,12 @@ class Mode {
   public void superRandomize() {
     if (rand.nextInt(chance) == 0) {
       wheel.newScheme();
+    }
+    if (maybe(32)) {
+      assignOnePanelBand(rand.nextInt(nPanels));
+    }
+    if (maybe(128)) {
+      ampFactor = 10 + rand.nextInt(20);
     }
     randomize();
   }
@@ -320,8 +336,45 @@ class Mode {
     }
   }
   
+  public void setCogs(int p, int start, int nCogs) {
+    Panel panel = eye.panels[p];
+    float space = 1.0 * panel.nPixels / nCogs;
+    int count = 0;
+    for (int j = start; j < panel.nPixels + start; j++) {
+      int i = j % panel.nPixels;
+      if (round(count * space) - (j - start) == 0) {
+        panel.updateOne(i, p * panelOffset + i * pixelOffset);
+        count++;
+      } else {
+        panel.updateOne(i, new int[] {0, 0, 0});
+      }
+    }
+  }
+  
   public void enter() {
     justEntered = true;
+  }
+  
+  public void applyPanelsFFT() {
+    for (int i = 0; i < nPanels; i++) {
+      int iAmp = constrain(bpm.getBand(panelBands[i]) * ampFactor, 0, 255);
+      if (iAmp < freqThresh) {
+        //
+      } else { 
+        //
+      }
+      eye.panels[i].applyBrightnessAll(iAmp);
+    }
+  }
+  
+  private void assignPanelBands() {
+    for (int i = 0; i < nPanels; i++) {
+      panelBands[i] = rand.nextInt(10);
+    }
+  }
+  
+  private void assignOnePanelBand(int index) {
+    panelBands[index] = rand.nextInt(10);
   }
   
   public void drawFFT() {

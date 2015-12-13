@@ -42,7 +42,7 @@ final int OL = 12;
 
 boolean mouseRotate = false;
 boolean drawFFT = false;
-boolean mouseBoolean = false;
+boolean mouseBoolean = true;
 
 // Global variables for remote control.
 int globalBrightness = 255;
@@ -55,16 +55,17 @@ float gainFactor = 1.0;
 int pixelOffset = 2;
 int panelOffset = 10;
 int loopOffset = 10;
-int beatOffset = 100;
+int beatOffset = 0;
 int shiftChance = 8;
+boolean panelFFT = false;
 
 int nColors = 1500;
-int maxDelay = 480;
+int maxDelay = 120;
 int maxOffset = nColors/8;
 int maxPixelOffset = maxOffset/8;
 
 // Open sound control business
-OscP5 oscP5;
+OscFix oscFix;
 NetAddress myRemoteLocation;
 NetAddressList myNetAddressList = new NetAddressList();
 int myListeningPort = 5001;
@@ -88,21 +89,26 @@ public void setup() {
   bpm = new BPMDetector(in);
   bpm.setup();
   
-  oscP5 = new OscP5(this, myListeningPort);
+  oscFix = new OscFix(this, myListeningPort);
   // set the remote location to be the localhost on port 5001
   myRemoteLocation = new NetAddress("10.0.0.6", myListeningPort);
 }
 
 public void draw() {
   background(0);
-  //loopOffset = (int) map(mouseY, height, 0, 0, wheel.nColors()/20);
+  eye.randomize();
+  if(eye.modes[eye.mode].justEntered) {
+    oscModeSync();
+  }
   eye.update();
+  
   translate(width/2,height/2,0);
   if (mouseRotate) {
     rotateY(map(mouseX, 0, width, -PI/2, PI/2));
     rotateX(map(mouseY, 0, height, -PI/2, PI/2));
   }
   eye.draw();
+  
   //eye.send();
 }
 
@@ -138,7 +144,6 @@ void oscEvent(OscMessage theOscMessage)
       a0 = 5 - Integer.parseInt(addPatt.substring(6, 7));
       a1 = Integer.parseInt(addPatt.substring(8, 9)) - 1;
       eye.setMode((5 * a0 + a1) % eye.nModes);
-      println(eye.mode);
     }
   } else if (patLen == 10 && addPatt.substring(0, 8).equals("/offsets")) {
     int iOffset = Integer.parseInt(addPatt.substring(9,10));
@@ -157,10 +162,40 @@ void oscEvent(OscMessage theOscMessage)
         beatOffset = round(map(faderVal, 0.0, 1.0, 0.0, maxOffset));
         break;
     }
+  } else if (patLen == 9 && addPatt.substring(0,5).equals("/vibe")) {
+    println("address pattern: " + theOscMessage.addrPattern());
+    println("type tag: " + theOscMessage.typetag());
+    if (theOscMessage.get(0).floatValue() == 1.0) {
+      a0 = 2 - Integer.parseInt(addPatt.substring(6, 7));
+      a1 = Integer.parseInt(addPatt.substring(8, 9)) - 1;
+      int func = 2 * a0 + a1;
+      switch(func) {
+        case 0: // ALL
+          eye.setVibe(wheel.ALL);
+          break;
+        case 1: // generate a new scheme within the current vibe
+          eye.newScheme();
+          break;
+        case 2: // WARM
+          eye.setVibe(wheel.WARM);
+          break;
+        case 3: // COOL
+          eye.setVibe(wheel.COOL);
+          break;
+      }
+    }
   } else if (addPatt.equals("/delay")) {
     globalDelay = round(map(theOscMessage.get(0).floatValue(), 0, 1, 0, maxDelay));
   } else if (addPatt.equals("/brightness")) {
     globalBrightness = round(theOscMessage.get(0).floatValue());
+  } else if (addPatt.equals("/fadeFactor")) {
+    fadeFactor = theOscMessage.get(0).floatValue();
+  } else if (addPatt.equals("/modeSwitching")) {
+    modeSwitching = round(theOscMessage.get(0).floatValue()) != 0;
+  } else if (addPatt.equals("/modeChance")) {
+    modeChance = round(theOscMessage.get(0).floatValue());
+  } else if (addPatt.equals("/panelFFT")) {
+    panelFFT = round(theOscMessage.get(0).floatValue()) != 0;
   } else {
     print("Unexpected OSC Message Recieved: ");
     println("address pattern: " + theOscMessage.addrPattern());
@@ -176,32 +211,57 @@ void oscSync()
   
   message = new OscMessage("/mode/" + str(5 - eye.mode / 5) + "/" + str(eye.mode % 5 + 1));
   message.add(1.0);
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
   message = new OscMessage("/offsets/1");
   message.add(map(pixelOffset, 0.0, maxPixelOffset, 0.0, 1.0));
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
   message = new OscMessage("/offsets/2");
   message.add(map(panelOffset, 0.0, maxOffset, 0.0, 1.0));
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
   message = new OscMessage("/offsets/3");
   message.add(map(loopOffset, 0.0, maxOffset, 0.0, 1.0));
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
   message = new OscMessage("/offsets/4");
   message.add(map(beatOffset, 0.0, maxOffset, 0.0, 1.0));
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
   message = new OscMessage("/delay");
   message.add(map(globalDelay, 0, maxDelay, 0, 1));
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
   message = new OscMessage("/brightness");
   message.add(globalBrightness);
-  oscP5.send(message, myNetAddressList);
+  oscFix.send(message, myNetAddressList);
   
+  message = new OscMessage("/fadeFactor");
+  message.add(fadeFactor);
+  oscFix.send(message, myNetAddressList);
+  
+  message = new OscMessage("/modeChance");
+  message.add(modeChance);
+  oscFix.send(message, myNetAddressList);
+  
+  message = new OscMessage("/modeSwitching");
+  message.add(modeSwitching ? 1 : 0);
+  oscFix.send(message, myNetAddressList);
+  
+  message = new OscMessage("/panelFFT");
+  message.add(panelFFT ? 1 : 0);
+  oscFix.send(message, myNetAddressList);
+  
+}
+
+void oscModeSync()
+{
+  OscMessage message;
+  
+  message = new OscMessage("/mode/" + str(5 - eye.mode / 5) + "/" + str(eye.mode % 5 + 1));
+  message.add(1.0);
+  oscFix.send(message, myNetAddressList);
 }
 
 private void oscConnect(String theIPaddress) {

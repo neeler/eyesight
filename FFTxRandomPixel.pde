@@ -2,8 +2,6 @@ class FFTxRandomPixel extends Mode {
   
   int loopCounter = 2300;
   int[] pixelBands;
-  int freqThresh = 200;
-  int ampFactor = 20;
   
   FFTxRandomPixel(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
@@ -21,7 +19,7 @@ class FFTxRandomPixel extends Mode {
      }
     }
     if (maybe(shiftChance)) {
-      shiftSomething();
+      rotateSomething();
     }
   }
   
@@ -30,7 +28,7 @@ class FFTxRandomPixel extends Mode {
   }
   
   public void randomize() {
-    if (maybe(4)) {
+    if (maybe(1)) {
       assignOneBand(rand.nextInt(nPixels));
     }
     if (maybe(128)) {

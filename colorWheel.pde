@@ -1,6 +1,10 @@
 class ColorWheel {
   
-  public int vibe = 0;
+  public int ALL = 0;
+  public int WARM = 1;
+  public int COOL = 2;
+  public int WHITE = 3;
+  public int vibe = ALL;
   
   private int nColors;
   private int wheelPos = 0;
@@ -71,19 +75,23 @@ class ColorWheel {
   
   public void newScheme() {
     switch(vibe) {
-      case(0) : // DEFAULT
+      case 0 : // DEFAULT
         genScheme(128);
         break;
-      case(1) : // WARM
+      case 1 : // WARM
         genScheme(280, 420);
         break;
-      case(2) : // COOL
+      case 2 : // COOL
         genScheme(62, 284);
         break;
-      case(3) : // WHITE
+      case 3 : // WHITE
         genSchemeWhite();
         break;
     }
+  }
+  
+  public void setVibe(int v) {
+    vibe = v;
   }
   
   public void genScheme(int colorThreshold) {

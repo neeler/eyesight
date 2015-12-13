@@ -1,12 +1,9 @@
 class FFTxPanel extends Mode {
   
-  int[] panelBands = new int[nPanels];
-  int freqThresh = 200;
-  int ampFactor = 20;
-  
   FFTxPanel(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
     delayable = false;
+    autoFFT = false;
   }
   
   public void update() {
@@ -25,26 +22,11 @@ class FFTxPanel extends Mode {
   }
   
   public void justEntered() {
-    assignBands();
+    
   }
   
   public void randomize() {
-    if (maybe(32)) {
-      assignOneBand(rand.nextInt(nPanels));
-    }
-    if (maybe(128)) {
-      ampFactor = 10 + rand.nextInt(20);
-    }
-  }
-  
-  private void assignBands() {
-    for (int i = 0; i < nPanels; i++) {
-      panelBands[i] = rand.nextInt(10);
-    }
-  }
-  
-  private void assignOneBand(int index) {
-    panelBands[index] = rand.nextInt(10);
+    
   }
   
 }

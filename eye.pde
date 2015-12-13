@@ -10,8 +10,8 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 6;
-  int nModes = 7;
+  int mode = 5;
+  int nModes = 8;
   
   // Shapes
   PShape back, first, second, third;
@@ -59,6 +59,7 @@ class Eye {
     modes[4] = new Ripple(nPixels, nPanels);
     modes[5] = new Pulse(nPixels, nPanels);
     modes[6] = new Swirl(nPixels, nPanels);
+    modes[7] = new Gears(nPixels, nPanels);
   }
   
   public void draw() {
@@ -101,6 +102,15 @@ class Eye {
   public void setMode(int m) {
     mode = m % nModes;
     modes[mode].enter();
+  }
+  
+  public void newScheme() {
+    wheel.newScheme();
+  }
+  
+  public void setVibe(int v) {
+    wheel.setVibe(v);
+    wheel.newScheme();
   }
   
   public void drawShields() {

@@ -7,7 +7,7 @@ class Panel {
   
   
   PShape shape;
-  int alpha = 200;
+  int alpha = 255;
   int iOffset;
   
   Panel(PShape shape, int z) {
@@ -91,6 +91,12 @@ class Panel {
     for (int i = 0; i < nPixels; i++) {
       int[] c = wheel.getColor(wheelPos + offset * i, brightness);
       colors[i] = c;
+    }
+  }
+  
+  public void applyBrightnessAll(int brightness) {
+    for (int i = 0; i < nPixels; i++) {
+      colors[i] = wheel.applyBrightness(colors[i], brightness);
     }
   }
   
