@@ -18,7 +18,7 @@ class Eye {
   PShape[] shields = new PShape[5];
   PShape lights;
   int deltaZ = 25;
-  color panelEdges = color(100,100,100);
+  color panelEdges = color(30,30,30);
   float centerBrightness = 0;
   
   Eye() {
