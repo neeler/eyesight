@@ -9,7 +9,6 @@ class Swirl extends Mode {
   
   Swirl(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = true;
     autoFFT = false;
   }
   

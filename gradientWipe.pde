@@ -4,7 +4,6 @@ class GradientWipe extends Mode {
   
   GradientWipe(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = true;
   }
   
   public void update() {

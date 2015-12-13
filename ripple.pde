@@ -5,7 +5,6 @@ class Ripple extends Mode {
   
   Ripple(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = true;
   }
   public void update() {
     for (int r = 0; r < nRings; r++) {

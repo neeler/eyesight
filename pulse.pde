@@ -8,7 +8,6 @@ class Pulse extends Mode {
   
   Pulse(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = true;
   }
   public void update() {
     skip = mouseBoolean;

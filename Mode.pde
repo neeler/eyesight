@@ -12,7 +12,7 @@ public void randomize()
 class Mode {
   
   boolean justEntered = true;
-  boolean delayable = false;
+  boolean delayable = true;
   boolean autoFFT = true;
   boolean fadeBeforeUpdate = true;
   int prevTime;

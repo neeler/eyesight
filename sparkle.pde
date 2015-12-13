@@ -5,7 +5,6 @@ class Sparkle extends Mode {
   
   Sparkle(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = false;
   }
   
   public void update() {

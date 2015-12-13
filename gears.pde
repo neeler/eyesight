@@ -17,8 +17,6 @@ class Gears extends Mode {
   
   Gears(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = true;
-    // gearIndex = new int[] {C0, C1};
     gearIndex = new int[nPanels];
     nGears = gearIndex.length;
     gears = new Panel[nGears];

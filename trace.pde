@@ -7,7 +7,6 @@ class Trace extends Mode {
   
   Trace(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
-    delayable = true;
   }
   
   public void update() {
