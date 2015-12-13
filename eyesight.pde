@@ -47,7 +47,7 @@ boolean mouseBoolean = true;
 // Global variables for remote control.
 int globalBrightness = 255;
 int globalDelay = 0;
-float fadeFactor = 0.9;
+float fadeFactor = 0.98;
 int chance = 500;
 boolean modeSwitching = false;
 int modeChance = 320;
@@ -163,8 +163,6 @@ void oscEvent(OscMessage theOscMessage)
         break;
     }
   } else if (patLen == 9 && addPatt.substring(0,5).equals("/vibe")) {
-    println("address pattern: " + theOscMessage.addrPattern());
-    println("type tag: " + theOscMessage.typetag());
     if (theOscMessage.get(0).floatValue() == 1.0) {
       a0 = 2 - Integer.parseInt(addPatt.substring(6, 7));
       a1 = Integer.parseInt(addPatt.substring(8, 9)) - 1;

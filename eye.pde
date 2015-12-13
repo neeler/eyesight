@@ -10,8 +10,8 @@ class Eye {
   
   // Mode data
   Mode[] modes;
-  int mode = 5;
-  int nModes = 8;
+  int mode = 8;
+  int nModes = 9;
   
   // Shapes
   PShape back, first, second, third;
@@ -60,6 +60,7 @@ class Eye {
     modes[5] = new Pulse(nPixels, nPanels);
     modes[6] = new Swirl(nPixels, nPanels);
     modes[7] = new Gears(nPixels, nPanels);
+    modes[8] = new Sparkle(nPixels, nPanels);
   }
   
   public void draw() {
