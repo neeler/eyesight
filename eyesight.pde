@@ -10,7 +10,8 @@ import oscP5.*;
 import netP5.*;
 
 // Connection information.
-final String localHost = "127.0.0.1";
+final String host = "127.0.0.1";
+final int screenSize = 750;
 
 Random rand;
 OPC opc;
@@ -43,6 +44,7 @@ final int OL = 12;
 boolean mouseRotate = false;
 boolean drawFFT = false;
 boolean mouseBoolean = true;
+int maxPixelsPerPanel = 0;
 
 // Global variables for remote control.
 int globalBrightness = 255;
@@ -72,13 +74,13 @@ int myListeningPort = 5001;
 int myBroadcastPort = 12000;
 
 public void settings() {
-  size(1500, 1500, P3D);
+  size(screenSize, screenSize, P3D);
 }
 
 public void setup() {
   background(0);
   rand = new Random();
-  opc = new OPC(localHost, 7890);
+  opc = new OPC(host, 7890);
   wheel = new ColorWheel(nColors);
   eye = new Eye();
   

@@ -23,6 +23,8 @@ class Eye {
   
   Eye() {
     lights = loadShape("lights.svg");
+    float scale = 1.0 * screenSize / 1500;
+    lights.scale(scale);
     panels = new Panel[nPanels];
     PShape R = lights.getChild("R");
     panels[RT] = new Panel(R.getChild("RT"),2);
@@ -48,6 +50,7 @@ class Eye {
     shields[3] = loadShape("third.svg");
     shields[4] = loadShape("fourth.svg");
     for (PShape shield : shields) {
+      shield.scale(scale);
       shield.setStroke(panelEdges);
     }
     
@@ -75,8 +78,8 @@ class Eye {
   }
   
   public void send() {
-    for (Panel panel : panels) {
-      panel.send();
+    for (int i = 0; i < nPanels; i++) {
+      panels[i].send(i);
     }
   }
   

@@ -14,6 +14,9 @@ class Panel {
     this.shape = shape;
     shape.setStroke(false);
     this.nPixels = shape.getChildCount();
+    if (this.nPixels > maxPixelsPerPanel) {
+      maxPixelsPerPanel = this.nPixels;
+    }
     colors = new int[nPixels][3];
     this.z = z;
     reset();
@@ -32,7 +35,15 @@ class Panel {
     //iOffset = (iOffset + 1) % nPixels;
   }
   
+  public void send(int panelID) {
+    for (int i = 0; i < nPixels; i++) {
+      opc.setPixel(i + panelID * maxPixelsPerPanel, colors[i][0] << 16 | colors[i][1] << 8 | colors[i][2]);
+    }
+    opc.writePixels();
+  }
+  
   // For sending the pixel data to the fadecandy via OPC.
+  // DEPRECATED
   public void send() {
     for (int i = 0; i < nPixels; i++) {
       opc.setPixel(i, colors[i][0] << 16 | colors[i][1] << 8 | colors[i][2]);
