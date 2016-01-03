@@ -91,7 +91,7 @@ class Eye {
     //}
     for (int s = 0; s < strips.length; s++) {
       int pixSoFar = 0;
-      for (int p = 0; p < strips[0].length; p++) {
+      for (int p = 0; p < strips[s].length; p++) {
         Panel panel = panels[strips[s][p]];  
         for (int i = 0; i < panel.nPixels; i++) {
           int[] c = panel.colors[i];
