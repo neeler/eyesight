@@ -6,7 +6,6 @@ class Panel {
   int id;
   int z;
   
-  
   PShape shape;
   int alpha = 255;
   int iOffset;
@@ -84,7 +83,7 @@ class Panel {
   }
   
   public void updateAll(int offset) {
-    updateAll(0, offset);
+    updateAll(0, offset, 255);
   }
   
   public void updateAll(int wheelPos, int offset) {
@@ -105,24 +104,27 @@ class Panel {
   }
   
   public void rotate(boolean clockwise) {
+    int lastP = nPixels - 1;
     if (clockwise) {
-      int[] lastC = new int[] {colors[nPixels - 1][0],
-                               colors[nPixels - 1][1],
-                               colors[nPixels - 1][2]};
-      for (int i = nPixels - 1; i > 0; i--) {
-        colors[i][0] = colors[i - 1][0];
-        colors[i][0] = colors[i - 1][1];
-        colors[i][0] = colors[i - 1][2];
+      int[] lastC = new int[] {colors[lastP][0],
+                               colors[lastP][1],
+                               colors[lastP][2]};
+      for (int i = lastP; i > 0; i--) {
+        int iNext = i - 1;
+        colors[i][0] = colors[iNext][0];
+        colors[i][0] = colors[iNext][1];
+        colors[i][0] = colors[iNext][2];
       }
       colors[0] = lastC;
     } else {
       int[] firstC = new int[] {colors[0][0], colors[0][1], colors[0][2]};
-      for (int i = 0; i < nPixels - 1; i++) {
-        colors[i][0] = colors[i + 1][0];
-        colors[i][0] = colors[i + 1][1];
-        colors[i][0] = colors[i + 1][2];
+      for (int i = 0; i < lastP; i++) {
+        int iNext = i + 1;
+        colors[i][0] = colors[iNext][0];
+        colors[i][0] = colors[iNext][1];
+        colors[i][0] = colors[iNext][2];
       }
-      colors[nPixels - 1] = firstC;
+      colors[lastP] = firstC;
     }
   }
   
@@ -134,9 +136,9 @@ class Panel {
       g += colors[i][1];
       b += colors[i][2];
     }
-    r = round(r/nPixels);
-    g = round(g/nPixels);
-    b = round(b/nPixels);
+    r = round(1.0 * r/nPixels);
+    g = round(1.0 * g/nPixels);
+    b = round(1.0 * b/nPixels);
     return new int[] {r, g, b};
   }
 }

@@ -10,11 +10,12 @@ class Trace extends Mode {
   }
   
   public void update() {
-    for (int p = 0; p < eye.nPanels; p++) {
+    for (int p = 0; p < nPanels; p++) {
       Panel panel = eye.panels[p];
-      updateOne(p, panelIndex[p], wheel.getColor(panelOffset * p));
-      if (clockwise) panelIndex[p] = (panelIndex[p] + speed) % panel.nPixels;
-      else panelIndex[p] = (panelIndex[p] - speed + panel.nPixels) % panel.nPixels;
+      int index = panelIndex[p];
+      updateOne(p, index, wheel.getColor(panelOffset * p));
+      if (clockwise) panelIndex[p] = (index + speed) % panel.nPixels;
+      else panelIndex[p] = (index - speed + panel.nPixels) % panel.nPixels;
     }
   }
   

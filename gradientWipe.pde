@@ -1,26 +1,32 @@
 class GradientWipe extends Mode {
   
   int loopCounter = 2300;
+  float sinFactor, colorSpread, pixelStep;
   
   GradientWipe(int nPixels, int nPanels) {
     super(true, nPixels, nPanels);
   }
   
   public void update() {
-    for (int p = 0; p < eye.nPanels; p++) {
+    calcSin();
+    for (int p = 0; p < nPanels; p++) {
       Panel panel = eye.panels[p];
-      for (int i = 0; i < panel.nPixels; i++) {
+      int nPanPix = panel.nPixels;
+      for (int i = 0; i < nPanPix; i++) {
         updateOne(p, i, targetColor(i + panelOffset * p));
       }
     }
     loopCounter = (loopCounter + 1) % 3927;
   }
   
+  private void calcSin() {
+    sinFactor = (2.875 * sin(0.0016 * loopCounter)) + 3.125;
+    colorSpread = wheel.nColors() * sinFactor;
+    pixelStep = colorSpread / nPixels;
+  }
+  
   private int[] targetColor(int i) {
-    float sinFactor = (2.875 * sin(0.0016 * loopCounter)) + 3.125;
-    float colorSpread = wheel.nColors() * sinFactor;
-    float pixelStep = colorSpread / nPixels;
-    int[] c = wheel.getColor((int) (pixelStep * i));
+    int[] c = wheel.getColor(round(pixelStep * i));
     return c;
   }
   

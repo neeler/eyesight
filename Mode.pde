@@ -160,20 +160,22 @@ class Mode {
   }
   
   public void updateRing(int index, int wheelPos, int panelOffset, int pixelOffset) {
-    for(int i = 0; i < rings[index].length; i++){
+    int ringLen = rings[index].length;
+    for(int i = 0; i < ringLen; i++){
       Panel panel = eye.panels[rings[index][i]];
       panel.updateAll(wheelPos + panelOffset * i, pixelOffset);
     }
   }
   
   public void shiftRings(int[] c, boolean inward) {
+    int lastRing = nRings - 1;
     if (inward) {
-      for (int i = 0; i < nRings - 1; i++) {
+      for (int i = 0; i < lastRing; i++) {
         updateRing(i, averageRing(i + 1));
       }
-      updateRing(nRings - 1, c);
+      updateRing(lastRing, c);
     } else {
-      for (int i = nRings - 1; i > 0; i--) {
+      for (int i = lastRing; i > 0; i--) {
         updateRing(i, averageRing(i - 1));
       }
       updateRing(0, c);
@@ -199,15 +201,16 @@ class Mode {
   
   // shift all but skipRing
   public void shiftRings(int[] c, boolean inward, int skipRing) {
+    int lastRing = nRings - 1;
     if (skipRing == 0) {
-      shiftRings(c, inward, 1, nRings - 1);
+      shiftRings(c, inward, 1, lastRing);
       return;
-    } else if (skipRing == nRings - 1) {
+    } else if (skipRing == lastRing) {
       shiftRings(c, inward, 0, nRings - 2);
       return;
     }
     if (inward) {
-      for (int i = 0; i < nRings - 1; i++) {
+      for (int i = 0; i < lastRing; i++) {
         if (i == skipRing - 1) {
           i++;
           updateRing(i - 1, averageRing(i + 1));
@@ -217,7 +220,7 @@ class Mode {
       }
       updateRing(nRings - 1, c);
     } else {
-      for (int i = nRings - 1; i > 0; i--) {
+      for (int i = lastRing; i > 0; i--) {
         if (i == skipRing + 1) {
           i--;
           updateRing(i + 1, averageRing(i - 1));
@@ -253,20 +256,21 @@ class Mode {
   
   public void rotateRing(int index, boolean clockwise) {
     int nPan = rings[index].length;
+    int lastPan = nPan - 1;
     if (clockwise) {
-      int[] lastC = eye.panels[rings[index][nPan - 1]].getAverage();
-      for (int i = nPan - 1; i > 0; i--) {
+      int[] lastC = eye.panels[rings[index][lastPan]].getAverage();
+      for (int i = lastPan; i > 0; i--) {
         int[] panelAve = eye.panels[rings[index][i - 1]].getAverage();
         eye.panels[rings[index][i]].updateAll(panelAve);
       }
       eye.panels[rings[index][0]].updateAll(lastC);
     } else {
       int[] firstC = eye.panels[rings[index][0]].getAverage();
-      for (int i = 0; i < nPan - 1; i++) {
+      for (int i = 0; i < lastPan; i++) {
         int[] panelAve = eye.panels[rings[index][i + 1]].getAverage();
         eye.panels[rings[index][i]].updateAll(panelAve);
       }
-      eye.panels[rings[index][nPan - 1]].updateAll(firstC);
+      eye.panels[rings[index][lastPan]].updateAll(firstC);
     }
   }
   
@@ -340,9 +344,10 @@ class Mode {
     Panel panel = eye.panels[p];
     float space = 1.0 * panel.nPixels / nCogs;
     int count = 0;
-    for (int j = start; j < panel.nPixels + start; j++) {
+    int end = panel.nPixels + start;
+    for (int j = start; j < end; j++) {
       int i = j % panel.nPixels;
-      if (round(count * space) - (j - start) == 0) {
+      if (round(space * count) - (j - start) == 0) {
         panel.updateOne(i, p * panelOffset + i * pixelOffset);
         count++;
       } else {

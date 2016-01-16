@@ -1,7 +1,8 @@
 class Swirl extends Mode {
   
   int addChance = 4;
-  int[] circleBands = new int[2];
+  int nCircles = 2;
+  int[] circleBands = new int[nCircles];
   boolean[] sideDir = new boolean[] {false, false};
   int freqThresh = 200;
   int ampFactor = 20;
@@ -36,7 +37,7 @@ class Swirl extends Mode {
   
   public void randomize() {
     if (maybe(32)) {
-      assignOneBand(rand.nextInt(circleBands.length));
+      assignOneBand(rand.nextInt(nCircles));
     }
     if (maybe(shiftChance)) {
       shiftSomething();
@@ -77,7 +78,7 @@ class Swirl extends Mode {
   
   private void updateCircleFFT() {
     Panel[] circles = new Panel[] {eye.panels[C0], eye.panels[C1]};
-    for (int p = 0; p < circleBands.length; p++) {
+    for (int p = 0; p < nCircles; p++) {
       Panel panel = circles[p];
       int iAmp = constrain(bpm.getBand(circleBands[p]) * ampFactor, 0, 255);
       if (iAmp < freqThresh) {
@@ -89,7 +90,7 @@ class Swirl extends Mode {
   }
   
   private void assignBands() {
-    for (int i = 0; i < circleBands.length; i++) {
+    for (int i = 0; i < nCircles; i++) {
       circleBands[i] = rand.nextInt(10);
     }
   }
