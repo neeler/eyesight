@@ -34,6 +34,8 @@ class Panel {
     //iOffset = (iOffset + 1) % nPixels;
   }
   
+  // DEPRECATED -- UPDATED TO ALLOW MULTIPLE PANELS ON SAME STRIP
+  // NOW EYE.SEND() IS USED EXCLUSIVELY
   // For sending the pixel data to the fadecandy via OPC.
   public void send() {
     for (int i = 0; i < nPixels; i++) {

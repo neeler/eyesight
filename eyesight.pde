@@ -11,7 +11,7 @@ import netP5.*;
 
 // Connection information.
 final String host = "127.0.0.1";
-final int screenSize = 1500;
+final int screenSize = 500;
 
 Random rand;
 OPC opc;
@@ -44,7 +44,7 @@ final int OL = 12;
 boolean mouseRotate = false;
 boolean drawFFT = false;
 boolean mouseBoolean = true;
-int pixelsPerStrip = 196;
+int pixelsPerStrip = 280;
 
 // Global variables for remote control.
 int globalBrightness = 255;
@@ -111,7 +111,7 @@ public void draw() {
   }
   eye.draw();
   
-  eye.send();
+  //eye.send();
 }
 
 public void keyPressed() {
